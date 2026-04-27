@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>盤點行程異動聯絡單產生器</title>
+<title>盤點行程異動書平台</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -20,7 +20,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .header{background:var(--accent);padding:0 2rem;display:flex;align-items:center;height:56px;gap:12px;}
 .header-logo{width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;}
 .header-title{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:600;color:#fff;letter-spacing:0.04em;}
-.header-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-left:auto;}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.5);}
 .header-admin-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;}
 .header-admin-btn:hover{background:rgba(255,255,255,0.2);}
 .main{max-width:960px;margin:0 auto;padding:2rem 1.5rem 4rem;}
@@ -39,6 +40,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .card-head-sub{font-size:12px;color:var(--text-sub);margin-left:auto;}
 .card-body{padding:1.5rem;}
 .upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.upload-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.upload-label{font-size:12px;font-weight:600;color:var(--text-sub);}
+.upload-date{font-size:11px;color:var(--accent);font-weight:600;background:var(--accent-light);padding:2px 8px;border-radius:4px;display:none;}
 .upload-zone{border:2px dashed var(--border-strong);border-radius:10px;padding:2rem 1rem;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2);position:relative;}
 .upload-zone:hover{border-color:var(--accent);background:var(--accent-light);}
 .upload-zone.active{border-color:var(--accent);border-style:solid;background:var(--accent-light);}
@@ -50,7 +54,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .upload-fname{font-size:12px;color:var(--text-sub);word-break:break-all;}
 .upload-zone.active .upload-fname{color:var(--text);font-weight:500;}
 .upload-hint{font-size:11px;color:var(--text-light);margin-top:4px;}
+.upload-remind{margin-top:12px;padding:10px 14px;background:var(--blue-bg);border:1px solid #C0D4E8;border-radius:8px;font-size:12px;color:var(--blue);display:flex;align-items:flex-start;gap:8px;}
 .err-msg{margin-top:12px;padding:10px 14px;background:var(--red-bg);border:1px solid #E8C0C0;border-radius:8px;font-size:12px;color:var(--red);display:none;}
+.warn-msg{margin-top:12px;padding:12px 14px;background:var(--gold-bg);border:1px solid #E8D080;border-radius:8px;font-size:13px;color:var(--gold);display:none;}
+.warn-btns{display:flex;gap:8px;margin-top:10px;}
+.btn-warn-ok{padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-warn-cancel{padding:7px 16px;background:var(--surface2);color:var(--text-sub);border:1px solid var(--border);border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;}
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
 .loading-overlay.show{display:flex;}
 .loading-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
@@ -66,9 +75,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .stat-box.hi-green .stat-value{color:var(--accent);}
 .stat-box.hi-orange{background:var(--orange-bg);border-color:#E8C090;}
 .stat-box.hi-orange .stat-value{color:var(--orange);}
-.info-strip{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--accent);margin-bottom:1.25rem;display:flex;gap:24px;flex-wrap:wrap;}
+.info-strip{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--accent);margin-bottom:1.25rem;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
 .info-item{display:flex;align-items:center;gap:6px;}
 .info-label{font-weight:700;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;}
+.info-template{margin-left:auto;font-size:11px;color:var(--text-sub);background:var(--surface);border:1px solid var(--border);padding:3px 10px;border-radius:4px;white-space:nowrap;}
 .section-title{font-size:13px;font-weight:700;color:var(--text-sub);margin-bottom:10px;display:flex;align-items:center;gap:8px;letter-spacing:0.04em;text-transform:uppercase;}
 .section-badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:700;}
 .badge-green{background:var(--accent-light);color:var(--accent);}
@@ -83,6 +93,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .shop-name{font-size:12px;color:var(--text-sub);margin-top:2px;}
 .badge-old{color:var(--red);background:var(--red-bg);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500;display:inline-block;}
 .badge-new{color:var(--blue);background:var(--blue-bg);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500;display:inline-block;}
+.notifier-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.notifier-label{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;}
+.notifier-input{flex:1;min-width:180px;}
+.notifier-hint{font-size:11px;color:var(--text-light);}
 .notice{background:var(--gold-bg);border:1px solid #E8D080;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--gold);margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:8px;}
 .btn-dl{width:100%;padding:14px;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;letter-spacing:0.04em;transition:background 0.15s,box-shadow 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
 .btn-green{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(45,79,60,0.2);}
@@ -91,11 +105,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .btn-orange:hover{background:#A35816;}
 .btn-dl:disabled{opacity:0.5;cursor:not-allowed;}
 .success-banner{margin-top:4px;padding:10px 14px;background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:8px;font-size:13px;color:var(--accent);font-weight:600;text-align:center;display:none;margin-bottom:8px;}
-
 /* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;}
 .modal-overlay.show{display:flex;}
-.modal{background:var(--surface);border-radius:12px;padding:2rem;width:440px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal{background:var(--surface);border-radius:12px;padding:2rem;width:460px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:1.5rem;color:var(--text);}
 .modal-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid var(--border);}
 .modal-tab{padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-sub);border-bottom:2px solid transparent;margin-bottom:-1px;}
@@ -104,7 +117,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .modal-section.active{display:block;}
 .field-label{font-size:12px;color:var(--text-sub);margin-bottom:5px;font-weight:600;}
 .field-wrap{margin-bottom:12px;}
-input[type="text"],input[type="password"],input[type="date"]{width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:'Noto Sans TC',sans-serif;background:var(--surface);color:var(--text);outline:none;transition:border-color 0.15s;}
+.current-template-badge{display:block;background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mid);border-radius:6px;padding:6px 10px;font-size:12px;font-weight:600;margin-bottom:12px;word-break:break-all;}
+input[type="text"],input[type="password"]{width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:'Noto Sans TC',sans-serif;background:var(--surface);color:var(--text);outline:none;transition:border-color 0.15s;}
 input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 .btn-primary{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:4px;}
 .btn-primary:hover{background:var(--accent-hover);}
@@ -113,21 +127,18 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 .modal-msg{padding:10px 12px;border-radius:7px;font-size:13px;margin-top:10px;display:none;}
 .modal-msg.ok{background:var(--accent-light);color:var(--accent);}
 .modal-msg.err{background:var(--red-bg);color:var(--red);}
-
-/* Login */
+.modal-wakeup{background:var(--gold-bg);border:1px solid #E8D080;border-radius:7px;padding:8px 12px;font-size:12px;color:var(--gold);margin-bottom:12px;display:none;}
 .login-section{display:none;}
 .login-section.show{display:block;}
 .admin-section{display:none;}
 .admin-section.show{display:block;}
-
 @media(max-width:640px){
   .upload-grid,.stats-row{grid-template-columns:1fr 1fr;}
-  .header-sub{display:none;}
+  .header-sub,.info-template{display:none;}
 }
 </style>
 </head>
 <body>
-
 <script>var API_URL='https://kevindevelop.onrender.com';</script>
 
 <div class="loading-overlay" id="loading">
@@ -139,27 +150,24 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 <div class="modal-overlay" id="admin-modal">
   <div class="modal">
     <div class="modal-title">⚙️ 管理員設定</div>
-
-    <!-- 登入 -->
     <div class="login-section show" id="login-section">
+      <div class="modal-wakeup" id="login-wakeup">⏳ 伺服器喚醒中，請稍候（約 30~50 秒）...</div>
       <div class="field-wrap">
         <div class="field-label">請輸入管理員密碼</div>
         <input type="password" id="login-pw" placeholder="密碼" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
-      <button class="btn-primary" onclick="doLogin()">登入</button>
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">登入</button>
       <div class="modal-msg" id="login-msg"></div>
       <div class="modal-footer"><button class="btn-secondary" onclick="closeAdmin()">取消</button></div>
     </div>
-
-    <!-- 管理員功能 -->
     <div class="admin-section" id="admin-section">
       <div class="modal-tabs">
         <div class="modal-tab active" onclick="switchTab('tab-template')">更新範本</div>
         <div class="modal-tab" onclick="switchTab('tab-password')">更換密碼</div>
       </div>
-
-      <!-- 更新範本 -->
       <div class="modal-section active" id="tab-template">
+        <div class="field-label">目前使用範本</div>
+        <div class="current-template-badge" id="modal-template-name">—</div>
         <div class="field-wrap">
           <div class="field-label">上傳新的異動通知書範本 (.xlsx)</div>
           <input type="file" id="template-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
@@ -167,8 +175,6 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         <button class="btn-primary" onclick="uploadTemplate()">上傳並更新範本</button>
         <div class="modal-msg" id="template-msg"></div>
       </div>
-
-      <!-- 更換密碼 -->
       <div class="modal-section" id="tab-password">
         <div class="field-wrap">
           <div class="field-label">舊密碼</div>
@@ -185,7 +191,6 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         <button class="btn-primary" onclick="changePassword()">更換密碼</button>
         <div class="modal-msg" id="pw-msg"></div>
       </div>
-
       <div class="modal-footer"><button class="btn-secondary" onclick="closeAdmin()">關閉</button></div>
     </div>
   </div>
@@ -193,9 +198,11 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 
 <div class="header">
   <div class="header-logo">📋</div>
-  <div class="header-title">盤點行程異動聯絡單產生器</div>
-  <div class="header-sub">盤點中心作業工具</div>
-  <button class="header-admin-btn" onclick="openAdmin()">⚙️ 管理員</button>
+  <div class="header-title">盤點行程異動書平台</div>
+  <div class="header-right">
+    <div class="header-sub">盤點中心作業工具</div>
+    <button class="header-admin-btn" onclick="openAdmin()">⚙️ 管理員</button>
+  </div>
 </div>
 
 <div class="main">
@@ -220,7 +227,10 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
     <div class="card-body">
       <div class="upload-grid">
         <div>
-          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:8px;">版本一　原始班表</div>
+          <div class="upload-label-row">
+            <div class="upload-label">版本一　原始班表</div>
+            <div class="upload-date" id="f1-date"></div>
+          </div>
           <div class="upload-zone" id="zone1" onclick="document.getElementById('f1').click()">
             <div class="upload-badge">✓</div>
             <span class="upload-icon">📂</span>
@@ -231,7 +241,10 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
           <input type="file" id="f1" accept=".xlsx" style="display:none">
         </div>
         <div>
-          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:8px;">版本二　異動後班表</div>
+          <div class="upload-label-row">
+            <div class="upload-label">版本二　異動後班表</div>
+            <div class="upload-date" id="f2-date"></div>
+          </div>
           <div class="upload-zone" id="zone2" onclick="document.getElementById('f2').click()">
             <div class="upload-badge">✓</div>
             <span class="upload-icon">📂</span>
@@ -242,7 +255,17 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
           <input type="file" id="f2" accept=".xlsx" style="display:none">
         </div>
       </div>
+      <div class="upload-remind">
+        <span>📌</span><span>勤務行事曆班表下載後務必儲存檔案，以利下次上傳比對使用。</span>
+      </div>
       <div class="err-msg" id="err-msg"></div>
+      <div class="warn-msg" id="warn-msg">
+        <div id="warn-text"></div>
+        <div class="warn-btns">
+          <button class="btn-warn-ok" onclick="forceCompare()">確認繼續</button>
+          <button class="btn-warn-cancel" onclick="cancelWarn()">取消</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -256,7 +279,8 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div class="info-strip">
         <div class="info-item"><span class="info-label">班表月份</span><span id="info-month">—</span></div>
         <div class="info-item"><span class="info-label">依據版本</span><span id="info-version">—</span></div>
-        <div class="info-item"><span class="info-label">已發送截止</span><span id="info-deadline">—</span></div>
+        <div class="info-item"><span class="info-label">已發佈盤點日期</span><span id="info-deadline">—</span></div>
+        <div class="info-template" id="info-template-name"></div>
       </div>
       <div class="stats-row">
         <div class="stat-box"><div class="stat-label">總異動店數</div><div class="stat-value" id="stat-total">0</div></div>
@@ -264,7 +288,6 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         <div class="stat-box hi-orange"><div class="stat-label">補1通知書</div><div class="stat-value" id="stat-bu1">0</div></div>
         <div class="stat-box"><div class="stat-label">班表總店數</div><div class="stat-value" id="stat-v1">0</div></div>
       </div>
-
       <div id="section-notice-list" style="display:none">
         <div class="section-title">異動通知書<span class="section-badge badge-green">已收到盤點日期通知</span></div>
         <div class="diff-wrap">
@@ -274,7 +297,6 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
           </table>
         </div>
       </div>
-
       <div id="section-bu1-list" style="display:none">
         <div class="section-title">補1實地盤點實施通知書<span class="section-badge badge-orange">尚未收到盤點日期通知</span></div>
         <div class="diff-wrap">
@@ -293,10 +315,15 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div class="card-head-title">下載文件</div>
     </div>
     <div class="card-body">
-      <div class="notice"><span>💡</span><span>下載後補填通知人員、確認人及主管簽核欄位即可發文。超過10筆異動通知書會自動分份打包成ZIP。</span></div>
+      <div class="notice"><span>💡</span><span>下載後補填確認人欄位即可發文。超過10筆異動通知書會自動分份打包成ZIP。</span></div>
+      <div class="notifier-wrap" id="notifier-wrap" style="display:none">
+        <div class="notifier-label">通知人員</div>
+        <input type="text" id="notifier-input" class="notifier-input" placeholder="輸入通知人員姓名（可留空）">
+        <div class="notifier-hint">填入後自動套用至所有異動通知書</div>
+      </div>
       <div id="btn-notice-wrap" style="display:none">
         <button class="btn-dl btn-green" id="btn-notice" onclick="generateNotice()">
-          <span>⬇</span><span id="btn-notice-text">下載盤點行程異動聯絡單 (.xlsx)</span>
+          <span>⬇</span><span id="btn-notice-text">下載盤點行程異動聯絡單</span>
         </button>
         <div class="success-banner" id="success-notice">✓ 異動聯絡單下載成功！</div>
       </div>
@@ -318,73 +345,167 @@ function showErr(msg){var el=document.getElementById('err-msg');el.textContent=m
 function showLoading(t){document.getElementById('loading-text').textContent=t||'處理中...';document.getElementById('loading').classList.add('show');}
 function hideLoading(){document.getElementById('loading').classList.remove('show');}
 function fmtDisp(d,n){var m=d.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);var ds=m?parseInt(m[2])+'月'+parseInt(m[3])+'日':d;return ds+(n?' '+n:'');}
+function fmtDateLabel(dateStr){
+  if(!dateStr)return'';
+  var m=dateStr.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+  return m?parseInt(m[1])+'年'+parseInt(m[2])+'月'+parseInt(m[3])+'日':'';
+}
+function extractDateFromFilename(fname){
+  var m=fname.match(/(\d{8})/);
+  if(!m)return'';
+  var d=m[1];
+  return parseInt(d.slice(0,4))+'年'+parseInt(d.slice(4,6))+'月'+parseInt(d.slice(6,8))+'日';
+}
 function buildRows(diffs){
   if(!diffs||!diffs.length)return'<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-light);font-size:13px">無資料</td></tr>';
   return diffs.map(function(d,i){return'<tr><td style="color:var(--text-light);font-size:12px">'+(i+1)+'</td><td><div class="shop-code">'+d['店號']+'</div><div class="shop-name">'+d['店名']+'</div></td><td><span class="badge-old">'+fmtDisp(d['原訂日'],d['原訂午'])+'</span></td><td style="text-align:center;color:var(--text-light)">→</td><td><span class="badge-new">'+fmtDisp(d['異動日'],d['異動午'])+'</span></td></tr>';}).join('');
 }
 
-function tryCompare(){
+function doCompare(force){
   if(!F1||!F2)return;
   showLoading('比對班表中...');
   document.getElementById('wakeup-notice').classList.add('show');
   var wt=setTimeout(function(){document.getElementById('loading-text').textContent='伺服器喚醒中，請稍候（約30~50秒）...';},5000);
-  var fd=new FormData();fd.append('file1',F1);fd.append('file2',F2);
+  var fd=new FormData();
+  fd.append('file1',F1);fd.append('file2',F2);
+  if(force)fd.append('force','true');
+
   fetch(API_URL+'/compare',{method:'POST',body:fd})
-  .then(function(r){clearTimeout(wt);document.getElementById('wakeup-notice').classList.remove('show');if(!r.ok)return r.json().then(function(d){throw new Error(d.error||'伺服器錯誤');});return r.json();})
-  .then(function(data){
-    hideLoading();RESULT=data;showErr('');
-    var total=data.notice_count+data.bu1_count;
-    document.getElementById('section-result').style.display='';
-    document.getElementById('section-form').style.display=total?'':'none';
-    document.getElementById('stat-total').textContent=total;
-    document.getElementById('stat-notice').textContent=data.notice_count;
-    document.getElementById('stat-bu1').textContent=data.bu1_count;
-    document.getElementById('stat-v1').textContent=data.v1_count;
-    document.getElementById('result-sub').textContent=total?'共 '+total+' 間店異動':'兩版本無差異';
-    document.getElementById('info-month').textContent=data.month+' 月份班表';
-    document.getElementById('info-version').textContent=data.version;
-    document.getElementById('info-deadline').textContent=data.deadline+' 前';
-    var hasN=data.notice_count>0,hasB=data.bu1_count>0;
-    document.getElementById('section-notice-list').style.display=hasN?'':'none';
-    document.getElementById('notice-tbody').innerHTML=buildRows(data.notice_diffs);
-    document.getElementById('section-bu1-list').style.display=hasB?'':'none';
-    document.getElementById('bu1-tbody').innerHTML=buildRows(data.bu1_diffs);
-    document.getElementById('btn-notice-wrap').style.display=hasN?'':'none';
-    var nf=data.notice_files||1;
-    document.getElementById('btn-notice-text').textContent='下載盤點行程異動聯絡單 ('+data.notice_count+'筆'+(nf>1?'，共'+nf+'份':'')+')'+(nf>1?' (.zip)':' (.xlsx)');
-    document.getElementById('btn-bu1-wrap').style.display=hasB?'':'none';
-    document.getElementById('btn-bu1-text').textContent='下載補1實地盤點實施通知書 ('+data.bu1_count+'份) (.zip)';
-    document.getElementById('success-notice').style.display='none';
-    document.getElementById('success-bu1').style.display='none';
-    setStep(total?2:2);
-    setTimeout(function(){document.getElementById('section-result').scrollIntoView({behavior:'smooth',block:'start'});},100);
+  .then(function(r){
+    clearTimeout(wt);
+    document.getElementById('wakeup-notice').classList.remove('show');
+    // 處理 warn_gap (200)
+    if(r.status===200)return r.json().then(function(d){
+      if(d.warn_gap){return{__warn_gap:true,data:d};}
+      return d;
+    });
+    if(!r.ok)return r.json().then(function(d){throw{msg:d.error,swap:d.warn_swap};});
+    return r.json();
   })
-  .catch(function(e){clearTimeout(e);hideLoading();document.getElementById('wakeup-notice').classList.remove('show');showErr('錯誤：'+e.message);});
+  .then(function(result){
+    hideLoading();
+    if(result&&result.__warn_gap){
+      showWarn(result.data.message);
+      return;
+    }
+    renderResult(result);
+  })
+  .catch(function(e){
+    hideLoading();
+    document.getElementById('wakeup-notice').classList.remove('show');
+    showErr(e.msg||e.message||'發生錯誤');
+  });
 }
 
-document.getElementById('f1').onchange=function(e){var f=e.target.files[0];if(!f)return;F1=f;document.getElementById('ver1').textContent='版本一';document.getElementById('fname1').textContent=f.name;document.getElementById('zone1').classList.add('active');tryCompare();};
-document.getElementById('f2').onchange=function(e){var f=e.target.files[0];if(!f)return;F2=f;document.getElementById('ver2').textContent='版本二';document.getElementById('fname2').textContent=f.name;document.getElementById('zone2').classList.add('active');tryCompare();};
+function showWarn(msg){
+  document.getElementById('warn-text').textContent=msg;
+  document.getElementById('warn-msg').style.display='block';
+  showErr('');
+}
+function cancelWarn(){
+  document.getElementById('warn-msg').style.display='none';
+  F2=null;
+  document.getElementById('zone2').classList.remove('active');
+  document.getElementById('ver2').textContent='點擊選擇檔案';
+  document.getElementById('fname2').textContent='尚未選擇';
+  document.getElementById('f2-date').style.display='none';
+}
+function forceCompare(){
+  document.getElementById('warn-msg').style.display='none';
+  doCompare(true);
+}
 
-function dlFile(url,fnTpl,btnId,successId){
+function renderResult(data){
+  RESULT=data;showErr('');
+  var total=data.notice_count+data.bu1_count;
+  document.getElementById('section-result').style.display='';
+  document.getElementById('section-form').style.display=total?'':'none';
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-notice').textContent=data.notice_count;
+  document.getElementById('stat-bu1').textContent=data.bu1_count;
+  document.getElementById('stat-v1').textContent=data.v1_count;
+  document.getElementById('result-sub').textContent=total?'共 '+total+' 間店異動':'兩版本無差異';
+  document.getElementById('info-month').textContent=data.month+' 月份班表';
+  document.getElementById('info-version').textContent=data.version;
+  document.getElementById('info-deadline').textContent=data.deadline+' 前';
+  if(data.template_name){
+    document.getElementById('info-template-name').textContent='範本：'+data.template_name;
+    document.getElementById('info-template-name').style.display='';
+  }
+  var hasN=data.notice_count>0,hasB=data.bu1_count>0;
+  document.getElementById('section-notice-list').style.display=hasN?'':'none';
+  document.getElementById('notice-tbody').innerHTML=buildRows(data.notice_diffs);
+  document.getElementById('section-bu1-list').style.display=hasB?'':'none';
+  document.getElementById('bu1-tbody').innerHTML=buildRows(data.bu1_diffs);
+  document.getElementById('notifier-wrap').style.display=hasN?'flex':'none';
+  document.getElementById('btn-notice-wrap').style.display=hasN?'':'none';
+  var nf=data.notice_files||1;
+  document.getElementById('btn-notice-text').textContent='下載盤點行程異動聯絡單 ('+data.notice_count+'筆'+(nf>1?'，共'+nf+'份':'')+')'+( nf>1?' (.zip)':' (.xlsx)');
+  document.getElementById('btn-bu1-wrap').style.display=hasB?'':'none';
+  document.getElementById('btn-bu1-text').textContent='下載補1實地盤點實施通知書 ('+data.bu1_count+'份) (.zip)';
+  document.getElementById('success-notice').style.display='none';
+  document.getElementById('success-bu1').style.display='none';
+  document.getElementById('notifier-input').value='';
+  setStep(total?2:2);
+  setTimeout(function(){document.getElementById('section-result').scrollIntoView({behavior:'smooth',block:'start'});},100);
+}
+
+document.getElementById('f1').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  F1=f;
+  document.getElementById('ver1').textContent='版本一';
+  document.getElementById('fname1').textContent=f.name;
+  document.getElementById('zone1').classList.add('active');
+  var dl=document.getElementById('f1-date');
+  var d=extractDateFromFilename(f.name);
+  if(d){dl.textContent=d;dl.style.display='inline-block';}
+  document.getElementById('warn-msg').style.display='none';
+  doCompare(false);
+};
+document.getElementById('f2').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  F2=f;
+  document.getElementById('ver2').textContent='版本二';
+  document.getElementById('fname2').textContent=f.name;
+  document.getElementById('zone2').classList.add('active');
+  var dl=document.getElementById('f2-date');
+  var d=extractDateFromFilename(f.name);
+  if(d){dl.textContent=d;dl.style.display='inline-block';}
+  document.getElementById('warn-msg').style.display='none';
+  doCompare(false);
+};
+
+function dlFile(url,btnId,successId,extraForm){
   var btn=document.getElementById(btnId);btn.disabled=true;
   showLoading('產出中，請稍候...');
-  var fd=new FormData();fd.append('file1',F1);fd.append('file2',F2);
+  var fd=new FormData();
+  fd.append('file1',F1);fd.append('file2',F2);
+  if(extraForm)Object.keys(extraForm).forEach(function(k){fd.append(k,extraForm[k]);});
   fetch(API_URL+url,{method:'POST',body:fd})
-  .then(function(r){if(!r.ok)return r.json().then(function(d){throw new Error(d.error||'產出失敗');});return r.blob();})
-  .then(function(blob){
+  .then(function(r){
+    if(!r.ok)return r.json().then(function(d){throw new Error(d.error||'產出失敗');});
+    // 取得 Content-Disposition filename
+    var cd=r.headers.get('Content-Disposition')||'';
+    var fnMatch=cd.match(/filename\*=UTF-8''(.+)|filename="?([^"]+)"?/);
+    var serverFn=fnMatch?(fnMatch[1]?decodeURIComponent(fnMatch[1]):(fnMatch[2]||'')):('');
+    return r.blob().then(function(b){return{blob:b,filename:serverFn};});
+  })
+  .then(function(res){
     hideLoading();btn.disabled=false;
-    var today=new Date();var ds=today.getFullYear()+('0'+(today.getMonth()+1)).slice(-2)+('0'+today.getDate()).slice(-2);
-    var v=RESULT?RESULT.version:'draft';
-    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fnTpl.replace('{v}',v).replace('{d}',ds);a.click();URL.revokeObjectURL(a.href);
+    var a=document.createElement('a');a.href=URL.createObjectURL(res.blob);
+    a.download=res.filename||'download';
+    a.click();URL.revokeObjectURL(a.href);
     document.getElementById(successId).style.display='block';setStep(3);
   })
   .catch(function(e){hideLoading();btn.disabled=false;showErr('錯誤：'+e.message);});
 }
 function generateNotice(){
-  var nf=RESULT&&RESULT.notice_files>1;
-  dlFile('/generate_notice',nf?'盤點行程異動聯絡單_{v}_{d}.zip':'盤點行程異動聯絡單_{v}_{d}.xlsx','btn-notice','success-notice');
+  var notifier=document.getElementById('notifier-input').value||'';
+  dlFile('/generate_notice','btn-notice','success-notice',{notifier:notifier});
 }
-function generateBu1(){dlFile('/generate_bu1','補1通知書_{v}_{d}.zip','btn-bu1','success-bu1');}
+function generateBu1(){
+  dlFile('/generate_bu1','btn-bu1','success-bu1',{});
+}
 
 // ── 管理員 ───────────────────────────────────────────────────
 function openAdmin(){
@@ -393,32 +514,47 @@ function openAdmin(){
   document.getElementById('admin-section').classList.remove('show');
   document.getElementById('login-pw').value='';
   showModalMsg('login-msg','','');
+  document.getElementById('login-wakeup').style.display='none';
 }
 function closeAdmin(){document.getElementById('admin-modal').classList.remove('show');}
 document.getElementById('admin-modal').onclick=function(e){if(e.target===this)closeAdmin();};
-
 function showModalMsg(id,msg,type){var el=document.getElementById(id);el.textContent=msg;el.className='modal-msg'+(type?' '+type:'');el.style.display=msg?'block':'none';}
 
 function doLogin(){
   var pw=document.getElementById('login-pw').value;
   if(!pw){showModalMsg('login-msg','請輸入密碼','err');return;}
+  var btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='驗證中...';
+  var wt=setTimeout(function(){document.getElementById('login-wakeup').style.display='block';},3000);
   fetch(API_URL+'/admin/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})})
   .then(function(r){return r.json();})
   .then(function(d){
+    clearTimeout(wt);
+    document.getElementById('login-wakeup').style.display='none';
+    btn.disabled=false;btn.textContent='登入';
     if(d.ok){
       ADMIN_TOKEN=pw;
       document.getElementById('login-section').classList.remove('show');
       document.getElementById('admin-section').classList.add('show');
-    }else{showModalMsg('login-msg','密碼錯誤','err');}
-  }).catch(function(){showModalMsg('login-msg','連線失敗，請稍後再試','err');});
+      document.getElementById('modal-template-name').textContent=d.template_name||'—';
+      showModalMsg('template-msg','','');
+      showModalMsg('pw-msg','','');
+    }else{showModalMsg('login-msg',d.error||'密碼錯誤','err');}
+  }).catch(function(){
+    clearTimeout(wt);
+    document.getElementById('login-wakeup').style.display='none';
+    btn.disabled=false;btn.textContent='登入';
+    showModalMsg('login-msg','連線失敗，請稍後再試','err');
+  });
 }
 
 function switchTab(id){
-  document.querySelectorAll('.modal-tab').forEach(function(t,i){t.className='modal-tab'+(t.onclick.toString().includes(id)?' active':'');});
+  document.querySelectorAll('.modal-tab').forEach(function(t){
+    t.className='modal-tab'+(t.getAttribute('onclick').includes(id)?' active':'');
+  });
   document.querySelectorAll('.modal-section').forEach(function(s){s.className='modal-section';});
   document.getElementById(id).className='modal-section active';
-  // reset msgs
-  ['template-msg','pw-msg'].forEach(function(m){showModalMsg(m,'','');});
+  showModalMsg('template-msg','','');showModalMsg('pw-msg','','');
 }
 
 function uploadTemplate(){
@@ -428,8 +564,12 @@ function uploadTemplate(){
   fetch(API_URL+'/admin/upload_template',{method:'POST',body:fd})
   .then(function(r){return r.json();})
   .then(function(d){
-    if(d.ok)showModalMsg('template-msg',d.message,'ok');
-    else showModalMsg('template-msg',d.error,'err');
+    if(d.ok){
+      showModalMsg('template-msg',d.message,'ok');
+      document.getElementById('modal-template-name').textContent=d.template_name||'—';
+      if(document.getElementById('info-template-name'))
+        document.getElementById('info-template-name').textContent='範本：'+d.template_name;
+    }else{showModalMsg('template-msg',d.error,'err');}
   }).catch(function(){showModalMsg('template-msg','上傳失敗','err');});
 }
 
