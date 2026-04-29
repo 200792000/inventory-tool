@@ -291,6 +291,17 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div class="card-head-sub">僅支援 .xlsx 格式</div>
     </div>
     <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">姓名 <span style="color:var(--red)">*</span></div>
+          <input type="text" id="operator-input" placeholder="請輸入姓名" oninput="checkUserInfo()" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">課別 <span style="color:var(--red)">*</span></div>
+          <input type="text" id="dept-input" placeholder="例：北三課" oninput="checkUserInfo()" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+        </div>
+      </div>
+      <div id="upload-area" style="display:none">
       <div class="upload-grid">
         <div>
           <div class="upload-label-row">
@@ -415,6 +426,17 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 
 <script>
 var F1=null,F2=null,RESULT=null,ADMIN_TOKEN=null;
+
+function checkUserInfo(){
+  var name = document.getElementById('operator-input').value.trim();
+  var dept = document.getElementById('dept-input').value.trim();
+  var area = document.getElementById('upload-area');
+  if(name && dept){
+    area.style.display='block';
+  } else {
+    area.style.display='none';
+  }
+}
 
 function setStep(n){for(var i=1;i<=3;i++){var el=document.getElementById('si'+i);el.className='step-item'+(i<n?' done':i===n?' active':'');}}
 function showErr(msg){var el=document.getElementById('err-msg');el.textContent=msg;el.style.display=msg?'block':'none';}
