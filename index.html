@@ -194,17 +194,17 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div class="modal-section" id="tab-password">
         <div class="field-wrap">
           <div class="field-label">舊密碼</div>
-          <input type="password" id="old-pw" placeholder="輸入舊密碼" onkeydown="if(event.key==='Enter')event.preventDefault();">
+          <input type="text" id="old-pw" placeholder="輸入舊密碼" autocomplete="off" onkeydown="return event.key!=='Enter';" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
         </div>
         <div class="field-wrap">
           <div class="field-label">新密碼（至少 6 個字元）</div>
-          <input type="password" id="new-pw" placeholder="輸入新密碼" onkeydown="if(event.key==='Enter')event.preventDefault();">
+          <input type="text" id="new-pw" placeholder="輸入新密碼" autocomplete="off" onkeydown="return event.key!=='Enter';" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
         </div>
         <div class="field-wrap">
           <div class="field-label">確認新密碼</div>
-          <input type="password" id="new-pw2" placeholder="再次輸入新密碼" onkeydown="if(event.key==='Enter')changePassword();">
+          <input type="text" id="new-pw2" placeholder="再次輸入新密碼" autocomplete="off" onkeydown="return event.key!=='Enter';" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
         </div>
-        <button type="button" class="btn-primary" onclick="changePassword()">更換密碼</button>
+        <button type="button" class="btn-primary" onclick="changePassword();return false;">更換密碼</button>
         <div class="modal-msg" id="pw-msg"></div>
       </div>
       <div class="modal-section" id="tab-records">
@@ -343,15 +343,7 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div class="upload-remind">
         <span>📌</span><span>勤務行事曆班表下載後務必儲存檔案，以利下次上傳比對使用。</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:12px;">
-        <div>
-          <input type="text" id="operator-input" placeholder="請輸入姓名" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
-        </div>
-        <div>
-          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">課別</div>
-          <input type="text" id="dept-input" placeholder="例：北三課" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
-        </div>
-      </div>
+      </div><!-- end upload-area -->
       <div class="err-msg" id="err-msg"></div>
       <div class="warn-msg" id="warn-msg">
         <div id="warn-text"></div>
