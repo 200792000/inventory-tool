@@ -174,14 +174,22 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         <div class="modal-tab" onclick="switchTab('tab-search')">店鋪查詢</div>
       </div>
       <div class="modal-section active" id="tab-template">
-        <div class="field-label">目前使用範本</div>
-        <div class="current-template-badge" id="modal-template-name">—</div>
-        <div class="field-wrap">
-          <div class="field-label">上傳新的異動通知書範本 (.xlsx)</div>
-          <input type="file" id="template-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px;">
+          <div class="current-template-badge" id="modal-shop-date" style="background:var(--accent-light);color:var(--accent);">店鋪檔更新日：—</div>
+          <div class="current-template-badge" id="modal-staff-date" style="background:var(--orange-bg);color:var(--orange);">擔當資料更新日：—</div>
         </div>
-        <button class="btn-primary" onclick="uploadTemplate()">上傳並更新範本</button>
-        <div class="modal-msg" id="template-msg"></div>
+        <div class="field-wrap">
+          <div class="field-label">上傳店鋪資料 (.xlsx)</div>
+          <input type="file" id="template-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
+          <button class="btn-primary" onclick="uploadTemplate()" style="margin-top:6px;">上傳店鋪資料</button>
+          <div class="modal-msg" id="template-msg"></div>
+        </div>
+        <div class="field-wrap" style="margin-top:8px;">
+          <div class="field-label">上傳擔當資料 (.xlsx)</div>
+          <input type="file" id="staff-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
+          <button class="btn-primary" onclick="uploadStaff()" style="margin-top:6px;background:#C46A1A;">上傳擔當資料</button>
+          <div class="modal-msg" id="staff-msg"></div>
+        </div>
       </div>
       <div class="modal-section" id="tab-password">
         <div class="field-wrap">
@@ -337,7 +345,6 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:12px;">
         <div>
-          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">操作者姓名</div>
           <input type="text" id="operator-input" placeholder="請輸入姓名" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
         </div>
         <div>
@@ -367,7 +374,7 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         <div class="info-item"><span class="info-label">班表月份</span><span id="info-month">—</span></div>
         <div class="info-item"><span class="info-label">依據版本</span><span id="info-version">—</span></div>
         <div class="info-item"><span class="info-label">已發佈盤點日期</span><span id="info-deadline">—</span></div>
-        <div class="info-template" id="info-template-name"></div>
+        <div class="info-template" id="info-shop-date" style="display:none"></div>
       </div>
       <div class="stats-row">
         <div class="stat-box"><div class="stat-label">總異動店數</div><div class="stat-value" id="stat-total">0</div></div>
@@ -531,10 +538,6 @@ function renderResult(data){
   document.getElementById('info-month').textContent=data.month+' 月份班表';
   document.getElementById('info-version').textContent=data.version;
   document.getElementById('info-deadline').textContent=data.deadline+' 前';
-  if(data.template_name){
-    document.getElementById('info-template-name').textContent='範本：'+data.template_name;
-    document.getElementById('info-template-name').style.display='';
-  }
   var hasN=data.notice_count>0,hasB=data.bu1_count>0;
   document.getElementById('section-notice-list').style.display=hasN?'':'none';
   document.getElementById('notice-tbody').innerHTML=buildRows(data.notice_diffs);
@@ -647,7 +650,7 @@ function doLogin(){
       ADMIN_TOKEN=pw;
       document.getElementById('login-section').classList.remove('show');
       document.getElementById('admin-section').classList.add('show');
-      document.getElementById('modal-template-name').textContent=d.template_name||'—';
+      updateAdminTemplateDisplay(d);
       showModalMsg('template-msg','','');
       showModalMsg('pw-msg','','');
     }else{showModalMsg('login-msg',d.error||'密碼錯誤','err');}
@@ -681,9 +684,7 @@ function uploadTemplate(){
   .then(function(d){
     if(d.ok){
       showModalMsg('template-msg',d.message,'ok');
-      document.getElementById('modal-template-name').textContent=d.template_name||'—';
-      if(document.getElementById('info-template-name'))
-        document.getElementById('info-template-name').textContent='範本：'+d.template_name;
+      updateAdminTemplateDisplay(d);
     }else{showModalMsg('template-msg',d.error,'err');}
   }).catch(function(){showModalMsg('template-msg','上傳失敗','err');});
 }
@@ -710,6 +711,22 @@ function buildTable(headers, records){
   });
   html += '</tbody></table>';
   return html;
+}
+
+function updateAdminTemplateDisplay(d){
+  var shopDate  = d.shop_update_date  || '';
+  var staffDate = d.staff_update_date || '';
+  var tmplName  = d.template_name     || 'template.xlsx';
+  // 管理員 Modal 顯示
+  var modalDisp = '';
+  if(shopDate)  modalDisp += '店鋪檔更新日' + shopDate;
+  if(staffDate) modalDisp += (modalDisp?'　':'') + '擔當資料更新日' + staffDate;
+  if(!modalDisp) modalDisp = tmplName;
+  document.getElementById('modal-template-name').textContent = modalDisp;
+  // 主畫面資訊列顯示（只顯示店鋪更新日）
+  var mainDisp = shopDate ? '店鋪檔更新日' + shopDate : '';
+  var el = document.getElementById('info-template-name');
+  if(el){ el.textContent = mainDisp; el.style.display = mainDisp ? '' : 'none'; }
 }
 
 function getFilters(){
