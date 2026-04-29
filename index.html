@@ -181,30 +181,30 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         <div class="field-wrap">
           <div class="field-label">上傳店鋪資料 (.xlsx)</div>
           <input type="file" id="template-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
-          <button class="btn-primary" onclick="uploadTemplate()" style="margin-top:6px;">上傳店鋪資料</button>
+          <button type="button" class="btn-primary" onclick="uploadTemplate()" style="margin-top:6px;">上傳店鋪資料</button>
           <div class="modal-msg" id="template-msg"></div>
         </div>
         <div class="field-wrap" style="margin-top:8px;">
           <div class="field-label">上傳擔當資料 (.xlsx)</div>
           <input type="file" id="staff-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
-          <button class="btn-primary" onclick="uploadStaff()" style="margin-top:6px;background:#C46A1A;">上傳擔當資料</button>
+          <button type="button" class="btn-primary" onclick="uploadStaff()" style="margin-top:6px;background:#C46A1A;">上傳擔當資料</button>
           <div class="modal-msg" id="staff-msg"></div>
         </div>
       </div>
       <div class="modal-section" id="tab-password">
         <div class="field-wrap">
           <div class="field-label">舊密碼</div>
-          <input type="password" id="old-pw" placeholder="輸入舊密碼">
+          <input type="password" id="old-pw" placeholder="輸入舊密碼" onkeydown="if(event.key==='Enter')event.preventDefault();">
         </div>
         <div class="field-wrap">
           <div class="field-label">新密碼（至少 6 個字元）</div>
-          <input type="password" id="new-pw" placeholder="輸入新密碼">
+          <input type="password" id="new-pw" placeholder="輸入新密碼" onkeydown="if(event.key==='Enter')event.preventDefault();">
         </div>
         <div class="field-wrap">
           <div class="field-label">確認新密碼</div>
-          <input type="password" id="new-pw2" placeholder="再次輸入新密碼">
+          <input type="password" id="new-pw2" placeholder="再次輸入新密碼" onkeydown="if(event.key==='Enter')changePassword();">
         </div>
-        <button class="btn-primary" onclick="changePassword()">更換密碼</button>
+        <button type="button" class="btn-primary" onclick="changePassword()">更換密碼</button>
         <div class="modal-msg" id="pw-msg"></div>
       </div>
       <div class="modal-section" id="tab-records">
