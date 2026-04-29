@@ -108,7 +108,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 /* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;}
 .modal-overlay.show{display:flex;}
-.modal{background:var(--surface);border-radius:12px;padding:2rem;width:460px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal{background:var(--surface);border-radius:12px;padding:2rem;width:680px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:1.5rem;color:var(--text);}
 .modal-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid var(--border);}
 .modal-tab{padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-sub);border-bottom:2px solid transparent;margin-bottom:-1px;}
@@ -128,6 +128,12 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 .modal-msg.ok{background:var(--accent-light);color:var(--accent);}
 .modal-msg.err{background:var(--red-bg);color:var(--red);}
 .modal-wakeup{background:var(--gold-bg);border:1px solid #E8D080;border-radius:7px;padding:8px 12px;font-size:12px;color:var(--gold);margin-bottom:12px;display:none;}
+.records-table{width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap;}
+.records-table th{padding:6px 8px;background:var(--surface2);border-bottom:1px solid var(--border);color:var(--text-sub);font-weight:700;position:sticky;top:0;}
+.records-table td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text);}
+.records-table tr:hover td{background:var(--accent-light);}
+.tag-notice{background:var(--accent-light);color:var(--accent);padding:1px 6px;border-radius:4px;font-size:10px;}
+.tag-bu1{background:var(--orange-bg);color:var(--orange);padding:1px 6px;border-radius:4px;font-size:10px;}
 .login-section{display:none;}
 .login-section.show{display:block;}
 .admin-section{display:none;}
@@ -164,6 +170,8 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div class="modal-tabs">
         <div class="modal-tab active" onclick="switchTab('tab-template')">更新範本</div>
         <div class="modal-tab" onclick="switchTab('tab-password')">更換密碼</div>
+        <div class="modal-tab" onclick="switchTab('tab-records')">使用紀錄</div>
+        <div class="modal-tab" onclick="switchTab('tab-search')">店鋪查詢</div>
       </div>
       <div class="modal-section active" id="tab-template">
         <div class="field-label">目前使用範本</div>
@@ -190,6 +198,64 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         </div>
         <button class="btn-primary" onclick="changePassword()">更換密碼</button>
         <div class="modal-msg" id="pw-msg"></div>
+      </div>
+      <div class="modal-section" id="tab-records">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div>
+            <div class="field-label">開始日期</div>
+            <input type="date" id="filter-date-from" style="width:100%;padding:6px 10px;border:1px solid var(--border-strong);border-radius:6px;font-size:12px;font-family:inherit;">
+          </div>
+          <div>
+            <div class="field-label">結束日期</div>
+            <input type="date" id="filter-date-to" style="width:100%;padding:6px 10px;border:1px solid var(--border-strong);border-radius:6px;font-size:12px;font-family:inherit;">
+          </div>
+          <div>
+            <div class="field-label">課別</div>
+            <input type="text" id="filter-dept" placeholder="例：北三課" style="width:100%;padding:6px 10px;border:1px solid var(--border-strong);border-radius:6px;font-size:12px;font-family:inherit;">
+          </div>
+          <div>
+            <div class="field-label">操作者</div>
+            <input type="text" id="filter-operator" placeholder="輸入姓名" style="width:100%;padding:6px 10px;border:1px solid var(--border-strong);border-radius:6px;font-size:12px;font-family:inherit;">
+          </div>
+          <div>
+            <div class="field-label">文件類型</div>
+            <select id="filter-doctype" style="width:100%;padding:6px 10px;border:1px solid var(--border-strong);border-radius:6px;font-size:12px;font-family:inherit;background:var(--surface);">
+              <option value="">全部</option>
+              <option value="異動通知書">異動通知書</option>
+              <option value="補1通知書">補1通知書</option>
+            </select>
+          </div>
+          <div>
+            <div class="field-label">顯示筆數</div>
+            <select id="filter-limit" style="width:100%;padding:6px 10px;border:1px solid var(--border-strong);border-radius:6px;font-size:12px;font-family:inherit;background:var(--surface);">
+              <option value="100">最新 100 筆</option>
+              <option value="50">最新 50 筆</option>
+              <option value="9999">全部</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="field-label" style="margin:0;" id="records-count"></div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="clearFilters()" style="padding:5px 12px;background:var(--surface2);color:var(--text-sub);border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">清除篩選</button>
+            <button onclick="loadRecords()" style="padding:5px 12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">套用篩選</button>
+          </div>
+        </div>
+        <div id="records-wrap" style="overflow-x:auto;max-height:280px;overflow-y:auto;">
+          <div style="color:var(--text-light);font-size:13px;text-align:center;padding:2rem;">點擊「套用篩選」載入紀錄</div>
+        </div>
+        <div class="modal-msg" id="records-msg"></div>
+      </div>
+      <div class="modal-section" id="tab-search">
+        <div class="field-wrap">
+          <div class="field-label">輸入店號或店名查詢</div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="search-input" placeholder="例：016026 或 汐止鄉長" onkeydown="if(event.key==='Enter')doSearch()" style="flex:1;">
+            <button onclick="doSearch()" style="padding:9px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">查詢</button>
+          </div>
+        </div>
+        <div id="search-wrap" style="overflow-x:auto;max-height:300px;overflow-y:auto;"></div>
+        <div class="modal-msg" id="search-msg"></div>
       </div>
       <div class="modal-footer"><button class="btn-secondary" onclick="closeAdmin()">關閉</button></div>
     </div>
@@ -257,6 +323,16 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       </div>
       <div class="upload-remind">
         <span>📌</span><span>勤務行事曆班表下載後務必儲存檔案，以利下次上傳比對使用。</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:12px;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">操作者姓名</div>
+          <input type="text" id="operator-input" placeholder="請輸入姓名" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">課別</div>
+          <input type="text" id="dept-input" placeholder="例：北三課" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+        </div>
       </div>
       <div class="err-msg" id="err-msg"></div>
       <div class="warn-msg" id="warn-msg">
@@ -369,6 +445,8 @@ function doCompare(force){
   var fd=new FormData();
   fd.append('file1',F1);fd.append('file2',F2);
   if(force)fd.append('force','true');
+  fd.append('operator',document.getElementById('operator-input').value||'');
+  fd.append('dept',document.getElementById('dept-input').value||'');
 
   fetch(API_URL+'/compare',{method:'POST',body:fd})
   .then(function(r){
@@ -565,7 +643,11 @@ function switchTab(id){
   });
   document.querySelectorAll('.modal-section').forEach(function(s){s.className='modal-section';});
   document.getElementById(id).className='modal-section active';
-  showModalMsg('template-msg','','');showModalMsg('pw-msg','','');
+  showModalMsg('template-msg','','');
+  showModalMsg('pw-msg','','');
+  showModalMsg('records-msg','','');
+  showModalMsg('search-msg','','');
+  if(id==='tab-records') loadRecords();
 }
 
 function uploadTemplate(){
@@ -582,6 +664,76 @@ function uploadTemplate(){
         document.getElementById('info-template-name').textContent='範本：'+d.template_name;
     }else{showModalMsg('template-msg',d.error,'err');}
   }).catch(function(){showModalMsg('template-msg','上傳失敗','err');});
+}
+
+function buildTable(headers, records){
+  if(!records||!records.length) return '<div style="text-align:center;padding:1.5rem;color:var(--text-light);font-size:13px;">沒有找到資料</div>';
+  // 只顯示重要欄位
+  var cols = [0,1,2,9,10,11,12,13,14,15]; // 時間、操作者、課別、店號、店名、原訂日、原訂午、異動日、異動午、類型
+  var colNames = ['時間','操作者','課別','店號','店名','原訂日期','原訂午別','異動後日期','異動後午別','類型'];
+  var html = '<table class="records-table"><thead><tr>';
+  colNames.forEach(function(n){html+='<th>'+n+'</th>';});
+  html += '</tr></thead><tbody>';
+  records.forEach(function(r){
+    html += '<tr>';
+    cols.forEach(function(i,ci){
+      var v = r[i]||'';
+      if(ci===9){
+        var cls = v==='補1通知書'?'tag-bu1':'tag-notice';
+        v = '<span class="'+cls+'">'+v+'</span>';
+      }
+      html += '<td>'+v+'</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function getFilters(){
+  return {
+    password:  ADMIN_TOKEN,
+    date_from: (document.getElementById('filter-date-from').value||'').replace(/-/g,'/'),
+    date_to:   (document.getElementById('filter-date-to').value||'').replace(/-/g,'/'),
+    dept:      document.getElementById('filter-dept').value||'',
+    operator:  document.getElementById('filter-operator').value||'',
+    doc_type:  document.getElementById('filter-doctype').value||'',
+    limit:     parseInt(document.getElementById('filter-limit').value||'100'),
+  };
+}
+function clearFilters(){
+  document.getElementById('filter-date-from').value='';
+  document.getElementById('filter-date-to').value='';
+  document.getElementById('filter-dept').value='';
+  document.getElementById('filter-operator').value='';
+  document.getElementById('filter-doctype').value='';
+  document.getElementById('filter-limit').value='100';
+  loadRecords();
+}
+function loadRecords(){
+  document.getElementById('records-wrap').innerHTML='<div style="text-align:center;padding:1.5rem;color:var(--text-light);">載入中...</div>';
+  document.getElementById('records-count').textContent='';
+  fetch(API_URL+'/admin/records',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(getFilters())})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.error){showModalMsg('records-msg',d.error,'err');return;}
+    showModalMsg('records-msg','','');
+    document.getElementById('records-count').textContent='共 '+d.records.length+' 筆';
+    document.getElementById('records-wrap').innerHTML=buildTable(d.headers,d.records);
+  }).catch(function(){showModalMsg('records-msg','載入失敗','err');});
+}
+
+function doSearch(){
+  var kw=document.getElementById('search-input').value.trim();
+  if(!kw){showModalMsg('search-msg','請輸入查詢關鍵字','err');return;}
+  document.getElementById('search-wrap').innerHTML='<div style="text-align:center;padding:1.5rem;color:var(--text-light);">查詢中...</div>';
+  fetch(API_URL+'/admin/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:ADMIN_TOKEN,keyword:kw})})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.error){showModalMsg('search-msg',d.error,'err');return;}
+    showModalMsg('search-msg','','');
+    document.getElementById('search-wrap').innerHTML=buildTable(d.headers,d.records);
+  }).catch(function(){showModalMsg('search-msg','查詢失敗','err');});
 }
 
 function changePassword(){
