@@ -610,7 +610,10 @@ function generateNotice(){
 }
 function generateBu1(){
   var mmdd=getTodayMMDD();
-  dlFile('/generate_bu1','btn-bu1','success-bu1',{},'補1通知書_'+mmdd+'.zip');
+  dlFile('/generate_bu1','btn-bu1','success-bu1',{
+  operator: document.getElementById('operator-input').value||'',
+  dept: document.getElementById('dept-input').value||''
+},'補1通知書_'+mmdd+'.zip');
 }
 
 // ── 管理員 ───────────────────────────────────────────────────
