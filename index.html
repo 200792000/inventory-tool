@@ -173,36 +173,46 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         <div class="modal-tab" onclick="switchTab('tab-records')">使用紀錄</div>
         <div class="modal-tab" onclick="switchTab('tab-search')">店鋪查詢</div>
       </div>
+      <!-- ✅ 更新範本頁籤：分為店舖資料、擔當資料、完整範本三區塊 -->
       <div class="modal-section active" id="tab-template">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;">
           <div class="current-template-badge" id="modal-shop-date" style="background:var(--accent-light);color:var(--accent);">店鋪檔更新日：—</div>
           <div class="current-template-badge" id="modal-staff-date" style="background:var(--orange-bg);color:var(--orange);">擔當資料更新日：—</div>
         </div>
+        <!-- 上傳店舖資料 -->
         <div class="field-wrap">
           <div class="field-label">上傳店鋪資料 (.xlsx)</div>
-          <input type="file" id="template-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
-          <button type="button" class="btn-primary" onclick="uploadTemplate()" style="margin-top:6px;">上傳店鋪資料</button>
-          <div class="modal-msg" id="template-msg"></div>
+          <input type="file" id="shop-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
+          <button type="button" class="btn-primary" onclick="uploadShop()" style="margin-top:6px;">上傳店鋪資料</button>
+          <div class="modal-msg" id="shop-msg"></div>
         </div>
+        <!-- 上傳擔當資料 -->
         <div class="field-wrap" style="margin-top:8px;">
           <div class="field-label">上傳擔當資料 (.xlsx)</div>
           <input type="file" id="staff-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
           <button type="button" class="btn-primary" onclick="uploadStaff()" style="margin-top:6px;background:#C46A1A;">上傳擔當資料</button>
           <div class="modal-msg" id="staff-msg"></div>
         </div>
+        <!-- 上傳完整範本（保留舊功能） -->
+        <div class="field-wrap" style="margin-top:8px;padding-top:12px;border-top:1px solid var(--border);">
+          <div class="field-label" style="color:var(--text-light);">上傳完整範本 (.xlsx)（含所有工作表）</div>
+          <input type="file" id="template-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
+          <button type="button" class="btn-primary" onclick="uploadTemplate()" style="margin-top:6px;background:var(--text-sub);">上傳完整範本</button>
+          <div class="modal-msg" id="template-msg"></div>
+        </div>
       </div>
       <div class="modal-section" id="tab-password">
         <div class="field-wrap">
           <div class="field-label">舊密碼</div>
-          <input type="text" id="old-pw" placeholder="輸入舊密碼" autocomplete="off" onkeydown="return event.key!=='Enter';" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+          <input type="text" id="old-pw" placeholder="輸入舊密碼" autocomplete="off" onkeydown="return event.key!=='Enter';">
         </div>
         <div class="field-wrap">
           <div class="field-label">新密碼（至少 6 個字元）</div>
-          <input type="text" id="new-pw" placeholder="輸入新密碼" autocomplete="off" onkeydown="return event.key!=='Enter';" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+          <input type="text" id="new-pw" placeholder="輸入新密碼" autocomplete="off" onkeydown="return event.key!=='Enter';">
         </div>
         <div class="field-wrap">
           <div class="field-label">確認新密碼</div>
-          <input type="text" id="new-pw2" placeholder="再次輸入新密碼" autocomplete="off" onkeydown="return event.key!=='Enter';" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+          <input type="text" id="new-pw2" placeholder="再次輸入新密碼" autocomplete="off" onkeydown="return event.key!=='Enter';">
         </div>
         <button type="button" class="btn-primary" onclick="changePassword();return false;">更換密碼</button>
         <div class="modal-msg" id="pw-msg"></div>
@@ -302,11 +312,11 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
         <div>
           <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">姓名 <span style="color:var(--red)">*</span></div>
-          <input type="text" id="operator-input" placeholder="請輸入姓名" oninput="checkUserInfo()" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+          <input type="text" id="operator-input" placeholder="請輸入姓名" oninput="checkUserInfo()">
         </div>
         <div>
           <div style="font-size:12px;font-weight:600;color:var(--text-sub);margin-bottom:5px;">課別 <span style="color:var(--red)">*</span></div>
-          <input type="text" id="dept-input" placeholder="例：北三課" oninput="checkUserInfo()" style="width:100%;padding:9px 12px;border:1px solid var(--border-strong);border-radius:7px;font-size:13px;font-family:inherit;">
+          <input type="text" id="dept-input" placeholder="例：北三課" oninput="checkUserInfo()">
         </div>
       </div>
       <div id="upload-area" style="display:none">
@@ -343,7 +353,7 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
       <div class="upload-remind">
         <span>📌</span><span>勤務行事曆班表下載後務必儲存檔案，以利下次上傳比對使用。</span>
       </div>
-      </div><!-- end upload-area -->
+      </div>
       <div class="err-msg" id="err-msg"></div>
       <div class="warn-msg" id="warn-msg">
         <div id="warn-text"></div>
@@ -427,14 +437,9 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 var F1=null,F2=null,RESULT=null,ADMIN_TOKEN=null;
 
 function checkUserInfo(){
-  var name = document.getElementById('operator-input').value.trim();
-  var dept = document.getElementById('dept-input').value.trim();
-  var area = document.getElementById('upload-area');
-  if(name && dept){
-    area.style.display='block';
-  } else {
-    area.style.display='none';
-  }
+  var name=document.getElementById('operator-input').value.trim();
+  var dept=document.getElementById('dept-input').value.trim();
+  document.getElementById('upload-area').style.display=(name&&dept)?'block':'none';
 }
 
 function setStep(n){for(var i=1;i<=3;i++){var el=document.getElementById('si'+i);el.className='step-item'+(i<n?' done':i===n?' active':'');}}
@@ -442,11 +447,6 @@ function showErr(msg){var el=document.getElementById('err-msg');el.textContent=m
 function showLoading(t){document.getElementById('loading-text').textContent=t||'處理中...';document.getElementById('loading').classList.add('show');}
 function hideLoading(){document.getElementById('loading').classList.remove('show');}
 function fmtDisp(d,n){var m=d.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);var ds=m?parseInt(m[2])+'月'+parseInt(m[3])+'日':d;return ds+(n?' '+n:'');}
-function fmtDateLabel(dateStr){
-  if(!dateStr)return'';
-  var m=dateStr.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
-  return m?parseInt(m[1])+'年'+parseInt(m[2])+'月'+parseInt(m[3])+'日':'';
-}
 function extractDateFromFilename(fname){
   var m=fname.match(/(\d{8})/);
   if(!m)return'';
@@ -468,42 +468,20 @@ function doCompare(force){
   if(force)fd.append('force','true');
   fd.append('operator',document.getElementById('operator-input').value||'');
   fd.append('dept',document.getElementById('dept-input').value||'');
-
   fetch(API_URL+'/compare',{method:'POST',body:fd})
-  .then(function(r){
-    clearTimeout(wt);
-    document.getElementById('wakeup-notice').classList.remove('show');
-    return r.json().then(function(d){return{status:r.status,data:d};});
-  })
+  .then(function(r){clearTimeout(wt);document.getElementById('wakeup-notice').classList.remove('show');return r.json().then(function(d){return{status:r.status,data:d};});})
   .then(function(res){
     hideLoading();
     var d=res.data;
-    if(d.warn_swap){
-      showErr(d.error||'⚠️ 上傳位置可能錯誤！版本二日期早於版本一，請確認是否上傳正確。');
-      return;
-    }
-    if(d.warn_gap){
-      showWarn(d.message);
-      return;
-    }
-    if(res.status!==200){
-      showErr(d.error||'發生錯誤');
-      return;
-    }
+    if(d.warn_swap){showErr(d.error||'⚠️ 上傳位置可能錯誤！');return;}
+    if(d.warn_gap){showWarn(d.message);return;}
+    if(res.status!==200){showErr(d.error||'發生錯誤');return;}
     renderResult(d);
   })
-  .catch(function(e){
-    hideLoading();
-    document.getElementById('wakeup-notice').classList.remove('show');
-    showErr(e.message||'發生錯誤');
-  });
+  .catch(function(e){hideLoading();document.getElementById('wakeup-notice').classList.remove('show');showErr(e.message||'發生錯誤');});
 }
 
-function showWarn(msg){
-  document.getElementById('warn-text').textContent=msg;
-  document.getElementById('warn-msg').style.display='block';
-  showErr('');
-}
+function showWarn(msg){document.getElementById('warn-text').textContent=msg;document.getElementById('warn-msg').style.display='block';showErr('');}
 function cancelWarn(){
   document.getElementById('warn-msg').style.display='none';
   F2=null;
@@ -512,10 +490,7 @@ function cancelWarn(){
   document.getElementById('fname2').textContent='尚未選擇';
   document.getElementById('f2-date').style.display='none';
 }
-function forceCompare(){
-  document.getElementById('warn-msg').style.display='none';
-  doCompare(true);
-}
+function forceCompare(){document.getElementById('warn-msg').style.display='none';doCompare(true);}
 
 function renderResult(data){
   RESULT=data;showErr('');
@@ -544,7 +519,7 @@ function renderResult(data){
   document.getElementById('success-notice').style.display='none';
   document.getElementById('success-bu1').style.display='none';
   document.getElementById('notifier-input').value='';
-  setStep(total?2:2);
+  setStep(2);
   setTimeout(function(){document.getElementById('section-result').scrollIntoView({behavior:'smooth',block:'start'});},100);
 }
 
@@ -594,31 +569,32 @@ function dlFile(url,btnId,successId,extraForm,fallbackFn){
   })
   .catch(function(e){hideLoading();btn.disabled=false;showErr('錯誤：'+e.message);});
 }
+
 function getTodayMMDD(){
   var d=new Date();
   return ('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2);
 }
+
 function generateNotice(){
   var notifier=document.getElementById('notifier-input').value||'';
   var nf=RESULT&&RESULT.notice_files>1;
-  // 從範本檔名組出下載檔名
-  var tname=RESULT&&RESULT.template_name?RESULT.template_name:'';
-  var base=tname.replace(/\.xlsx$/i,'');
   var mmdd=getTodayMMDD();
+  // ✅ 優先用後端回傳的 notice_filename（含民國年+月份）
   var fn=RESULT&&RESULT.notice_filename
-  ? RESULT.notice_filename+mmdd+(nf?'.zip':'.xlsx')
-  : (base?base+mmdd+(nf?'.zip':'.xlsx'):'盤點行程異動聯絡單_'+mmdd+(nf?'.zip':'.xlsx'));
+    ? RESULT.notice_filename+mmdd+(nf?'.zip':'.xlsx')
+    : '盤點行程異動聯絡單_'+mmdd+(nf?'.zip':'.xlsx');
   dlFile('/generate_notice','btn-notice','success-notice',{notifier:notifier},fn);
 }
+
 function generateBu1(){
   var mmdd=getTodayMMDD();
   dlFile('/generate_bu1','btn-bu1','success-bu1',{
-  operator: document.getElementById('operator-input').value||'',
-  dept: document.getElementById('dept-input').value||''
-},'補1通知書_'+mmdd+'.zip');
+    operator:document.getElementById('operator-input').value||'',
+    dept:document.getElementById('dept-input').value||''
+  },'補1通知書_'+mmdd+'.zip');
 }
 
-// ── 管理員 ───────────────────────────────────────────────────
+// ── 管理員 ────────────────────────────────────────────────────
 function openAdmin(){
   document.getElementById('admin-modal').classList.add('show');
   document.getElementById('login-section').classList.add('show');
@@ -647,7 +623,7 @@ function doLogin(){
       ADMIN_TOKEN=pw;
       document.getElementById('login-section').classList.remove('show');
       document.getElementById('admin-section').classList.add('show');
-      updateAdminTemplateDisplay(d);
+      updateAdminDisplay(d);
       showModalMsg('template-msg','','');
       showModalMsg('pw-msg','','');
     }else{showModalMsg('login-msg',d.error||'密碼錯誤','err');}
@@ -665,13 +641,43 @@ function switchTab(id){
   });
   document.querySelectorAll('.modal-section').forEach(function(s){s.className='modal-section';});
   document.getElementById(id).className='modal-section active';
-  showModalMsg('template-msg','','');
-  showModalMsg('pw-msg','','');
-  showModalMsg('records-msg','','');
-  showModalMsg('search-msg','','');
+  ['template-msg','pw-msg','records-msg','search-msg','shop-msg','staff-msg'].forEach(function(id){showModalMsg(id,'','');});
   if(id==='tab-records') loadRecords();
 }
 
+// ✅ 上傳店舖資料 → /admin/upload_shop
+function uploadShop(){
+  var f=document.getElementById('shop-file').files[0];
+  if(!f){showModalMsg('shop-msg','請選擇 .xlsx 檔案','err');return;}
+  var fd=new FormData();fd.append('file',f);fd.append('password',ADMIN_TOKEN);
+  showModalMsg('shop-msg','上傳中...','');
+  fetch(API_URL+'/admin/upload_shop',{method:'POST',body:fd})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){
+      showModalMsg('shop-msg',d.message,'ok');
+      if(d.shop_update_date) document.getElementById('modal-shop-date').textContent='店鋪檔更新日：'+d.shop_update_date;
+    }else{showModalMsg('shop-msg',d.error||'上傳失敗','err');}
+  }).catch(function(){showModalMsg('shop-msg','上傳失敗','err');});
+}
+
+// ✅ 上傳擔當資料 → /admin/upload_staff
+function uploadStaff(){
+  var f=document.getElementById('staff-file').files[0];
+  if(!f){showModalMsg('staff-msg','請選擇 .xlsx 檔案','err');return;}
+  var fd=new FormData();fd.append('file',f);fd.append('password',ADMIN_TOKEN);
+  showModalMsg('staff-msg','上傳中...','');
+  fetch(API_URL+'/admin/upload_staff',{method:'POST',body:fd})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){
+      showModalMsg('staff-msg',d.message,'ok');
+      if(d.staff_update_date) document.getElementById('modal-staff-date').textContent='擔當資料更新日：'+d.staff_update_date;
+    }else{showModalMsg('staff-msg',d.error||'上傳失敗','err');}
+  }).catch(function(){showModalMsg('staff-msg','上傳失敗','err');});
+}
+
+// 上傳完整範本 → /admin/upload_template（保留舊功能）
 function uploadTemplate(){
   var f=document.getElementById('template-file').files[0];
   if(!f){showModalMsg('template-msg','請選擇 .xlsx 檔案','err');return;}
@@ -681,60 +687,47 @@ function uploadTemplate(){
   .then(function(d){
     if(d.ok){
       showModalMsg('template-msg',d.message,'ok');
-      updateAdminTemplateDisplay(d);
+      updateAdminDisplay(d);
     }else{showModalMsg('template-msg',d.error,'err');}
   }).catch(function(){showModalMsg('template-msg','上傳失敗','err');});
 }
 
-function buildTable(headers, records){
-  if(!records||!records.length) return '<div style="text-align:center;padding:1.5rem;color:var(--text-light);font-size:13px;">沒有找到資料</div>';
-  // 只顯示重要欄位
-  var cols = [0,1,2,9,10,11,12,13,14,15]; // 時間、操作者、課別、店號、店名、原訂日、原訂午、異動日、異動午、類型
-  var colNames = ['時間','操作者','課別','店號','店名','原訂日期','原訂午別','異動後日期','異動後午別','類型'];
-  var html = '<table class="records-table"><thead><tr>';
+function updateAdminDisplay(d){
+  var shopDate  = d.shop_update_date  || '';
+  var staffDate = d.staff_update_date || '';
+  document.getElementById('modal-shop-date').textContent  = '店鋪檔更新日：'  + (shopDate  || '—');
+  document.getElementById('modal-staff-date').textContent = '擔當資料更新日：' + (staffDate || '—');
+}
+
+function buildTable(headers,records){
+  if(!records||!records.length)return'<div style="text-align:center;padding:1.5rem;color:var(--text-light);font-size:13px;">沒有找到資料</div>';
+  var cols=[0,1,2,9,10,11,12,13,14,15];
+  var colNames=['時間','操作者','課別','店號','店名','原訂日期','原訂午別','異動後日期','異動後午別','類型'];
+  var html='<table class="records-table"><thead><tr>';
   colNames.forEach(function(n){html+='<th>'+n+'</th>';});
-  html += '</tr></thead><tbody>';
+  html+='</tr></thead><tbody>';
   records.forEach(function(r){
-    html += '<tr>';
+    html+='<tr>';
     cols.forEach(function(i,ci){
-      var v = r[i]||'';
-      if(ci===9){
-        var cls = v==='補1通知書'?'tag-bu1':'tag-notice';
-        v = '<span class="'+cls+'">'+v+'</span>';
-      }
-      html += '<td>'+v+'</td>';
+      var v=r[i]||'';
+      if(ci===9){var cls=v==='補1通知書'?'tag-bu1':'tag-notice';v='<span class="'+cls+'">'+v+'</span>';}
+      html+='<td>'+v+'</td>';
     });
-    html += '</tr>';
+    html+='</tr>';
   });
-  html += '</tbody></table>';
+  html+='</tbody></table>';
   return html;
 }
 
-function updateAdminTemplateDisplay(d){
-  var shopDate  = d.shop_update_date  || '';
-  var staffDate = d.staff_update_date || '';
-  var tmplName  = d.template_name     || 'template.xlsx';
-  // 管理員 Modal 顯示
-  var modalDisp = '';
-  if(shopDate)  modalDisp += '店鋪檔更新日' + shopDate;
-  if(staffDate) modalDisp += (modalDisp?'　':'') + '擔當資料更新日' + staffDate;
-  if(!modalDisp) modalDisp = tmplName;
-  document.getElementById('modal-template-name').textContent = modalDisp;
-  // 主畫面資訊列顯示（只顯示店鋪更新日）
-  var mainDisp = shopDate ? '店鋪檔更新日' + shopDate : '';
-  var el = document.getElementById('info-template-name');
-  if(el){ el.textContent = mainDisp; el.style.display = mainDisp ? '' : 'none'; }
-}
-
 function getFilters(){
-  return {
-    password:  ADMIN_TOKEN,
-    date_from: (document.getElementById('filter-date-from').value||'').replace(/-/g,'/'),
-    date_to:   (document.getElementById('filter-date-to').value||'').replace(/-/g,'/'),
-    dept:      document.getElementById('filter-dept').value||'',
-    operator:  document.getElementById('filter-operator').value||'',
-    doc_type:  document.getElementById('filter-doctype').value||'',
-    limit:     parseInt(document.getElementById('filter-limit').value||'100'),
+  return{
+    password:ADMIN_TOKEN,
+    date_from:(document.getElementById('filter-date-from').value||'').replace(/-/g,'/'),
+    date_to:(document.getElementById('filter-date-to').value||'').replace(/-/g,'/'),
+    dept:document.getElementById('filter-dept').value||'',
+    operator:document.getElementById('filter-operator').value||'',
+    doc_type:document.getElementById('filter-doctype').value||'',
+    limit:parseInt(document.getElementById('filter-limit').value||'100'),
   };
 }
 function clearFilters(){
@@ -782,13 +775,8 @@ function changePassword(){
   fetch(API_URL+'/admin/change_password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({old_password:oldPw,new_password:newPw})})
   .then(function(r){return r.json();})
   .then(function(d){
-    if(d.ok){
-      ADMIN_TOKEN=newPw;
-      showModalMsg('pw-msg',d.message,'ok');
-      document.getElementById('old-pw').value='';
-      document.getElementById('new-pw').value='';
-      document.getElementById('new-pw2').value='';
-    }else{showModalMsg('pw-msg',d.error,'err');}
+    if(d.ok){ADMIN_TOKEN=newPw;showModalMsg('pw-msg',d.message,'ok');document.getElementById('old-pw').value='';document.getElementById('new-pw').value='';document.getElementById('new-pw2').value='';}
+    else{showModalMsg('pw-msg',d.error,'err');}
   }).catch(function(){showModalMsg('pw-msg','更換失敗','err');});
 }
 </script>
