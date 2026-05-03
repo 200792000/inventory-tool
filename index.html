@@ -605,7 +605,9 @@ function generateNotice(){
   var tname=RESULT&&RESULT.template_name?RESULT.template_name:'';
   var base=tname.replace(/\.xlsx$/i,'');
   var mmdd=getTodayMMDD();
-  var fn=base?base+mmdd+(nf?'.zip':'.xlsx'):'盤點行程異動聯絡單_'+mmdd+(nf?'.zip':'.xlsx');
+  var fn=RESULT&&RESULT.notice_filename
+  ? RESULT.notice_filename+mmdd+(nf?'.zip':'.xlsx')
+  : (base?base+mmdd+(nf?'.zip':'.xlsx'):'盤點行程異動聯絡單_'+mmdd+(nf?'.zip':'.xlsx'));
   dlFile('/generate_notice','btn-notice','success-notice',{notifier:notifier},fn);
 }
 function generateBu1(){
