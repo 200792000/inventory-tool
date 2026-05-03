@@ -181,23 +181,23 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
         </div>
         <!-- 上傳店舖資料 -->
         <div class="field-wrap">
-          <div class="field-label">上傳店鋪資料 (.xlsx)</div>
+          <div class="field-label">更新店鋪資料 (.xlsx)</div>
           <input type="file" id="shop-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
-          <button type="button" class="btn-primary" onclick="uploadShop()" style="margin-top:6px;">上傳店鋪資料</button>
+          <button type="button" class="btn-primary" onclick="uploadShop()" style="margin-top:6px;">更新店鋪資料</button>
           <div class="modal-msg" id="shop-msg"></div>
         </div>
         <!-- 上傳擔當資料 -->
         <div class="field-wrap" style="margin-top:8px;">
-          <div class="field-label">上傳擔當資料 (.xlsx)</div>
+          <div class="field-label">更新擔當資料 (.xlsx)</div>
           <input type="file" id="staff-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
-          <button type="button" class="btn-primary" onclick="uploadStaff()" style="margin-top:6px;background:#C46A1A;">上傳擔當資料</button>
+          <button type="button" class="btn-primary" onclick="uploadStaff()" style="margin-top:6px;background:#C46A1A;">更新擔當資料</button>
           <div class="modal-msg" id="staff-msg"></div>
         </div>
         <!-- 上傳完整範本（保留舊功能） -->
         <div class="field-wrap" style="margin-top:8px;padding-top:12px;border-top:1px solid var(--border);">
-          <div class="field-label" style="color:var(--text-light);">上傳完整範本 (.xlsx)（含所有工作表）</div>
+          <div class="field-label" style="color:var(--text-light);">更新完整範本 (.xlsx)（含所有工作表）</div>
           <input type="file" id="template-file" accept=".xlsx" style="width:100%;padding:8px 0;font-size:13px;">
-          <button type="button" class="btn-primary" onclick="uploadTemplate()" style="margin-top:6px;background:var(--text-sub);">上傳完整範本</button>
+          <button type="button" class="btn-primary" onclick="uploadTemplate()" style="margin-top:6px;background:var(--text-sub);">更新完整範本</button>
           <div class="modal-msg" id="template-msg"></div>
         </div>
       </div>
@@ -434,7 +434,14 @@ input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,79,60,0.1);}
 </div>
 
 <script>
-var F1=null,F2=null,RESULT=null,ADMIN_TOKEN=null;
+var F1=null,F2=null,RESULT=null,ADMIN_TOKEN=null,SHOP_UPDATE_DATE='';
+
+// ✅ 頁面載入時從後端取得店鋪更新日
+fetch(API_URL+'/health').then(function(r){return r.json();}).then(function(d){
+  SHOP_UPDATE_DATE = d.shop_update_date || '';
+  var el = document.getElementById('info-shop-date');
+  if(el && SHOP_UPDATE_DATE){ el.textContent='店鋪檔更新日：'+SHOP_UPDATE_DATE; el.style.display=''; }
+}).catch(function(){});
 
 function checkUserInfo(){
   var name=document.getElementById('operator-input').value.trim();
@@ -505,6 +512,13 @@ function renderResult(data){
   document.getElementById('info-month').textContent=data.month+' 月份班表';
   document.getElementById('info-version').textContent=data.version;
   document.getElementById('info-deadline').textContent=data.deadline+' 前';
+  // ✅ 顯示店鋪更新日在資訊列最右邊
+  var shopEl = document.getElementById('info-shop-date');
+  if(shopEl){
+    var sd = data.shop_update_date || SHOP_UPDATE_DATE || '';
+    if(sd){ shopEl.textContent='店鋪檔更新日：'+sd; shopEl.style.display=''; }
+    else { shopEl.style.display='none'; }
+  }
   var hasN=data.notice_count>0,hasB=data.bu1_count>0;
   document.getElementById('section-notice-list').style.display=hasN?'':'none';
   document.getElementById('notice-tbody').innerHTML=buildRows(data.notice_diffs);
@@ -650,15 +664,15 @@ function uploadShop(){
   var f=document.getElementById('shop-file').files[0];
   if(!f){showModalMsg('shop-msg','請選擇 .xlsx 檔案','err');return;}
   var fd=new FormData();fd.append('file',f);fd.append('password',ADMIN_TOKEN);
-  showModalMsg('shop-msg','上傳中...','');
+  showModalMsg('shop-msg','更新中...','');
   fetch(API_URL+'/admin/upload_shop',{method:'POST',body:fd})
   .then(function(r){return r.json();})
   .then(function(d){
     if(d.ok){
       showModalMsg('shop-msg',d.message,'ok');
       if(d.shop_update_date) document.getElementById('modal-shop-date').textContent='店鋪檔更新日：'+d.shop_update_date;
-    }else{showModalMsg('shop-msg',d.error||'上傳失敗','err');}
-  }).catch(function(){showModalMsg('shop-msg','上傳失敗','err');});
+    }else{showModalMsg('shop-msg',d.error||'更新失敗','err');}
+  }).catch(function(){showModalMsg('shop-msg','更新失敗','err');});
 }
 
 // ✅ 上傳擔當資料 → /admin/upload_staff
@@ -666,15 +680,15 @@ function uploadStaff(){
   var f=document.getElementById('staff-file').files[0];
   if(!f){showModalMsg('staff-msg','請選擇 .xlsx 檔案','err');return;}
   var fd=new FormData();fd.append('file',f);fd.append('password',ADMIN_TOKEN);
-  showModalMsg('staff-msg','上傳中...','');
+  showModalMsg('staff-msg','更新中...','');
   fetch(API_URL+'/admin/upload_staff',{method:'POST',body:fd})
   .then(function(r){return r.json();})
   .then(function(d){
     if(d.ok){
       showModalMsg('staff-msg',d.message,'ok');
       if(d.staff_update_date) document.getElementById('modal-staff-date').textContent='擔當資料更新日：'+d.staff_update_date;
-    }else{showModalMsg('staff-msg',d.error||'上傳失敗','err');}
-  }).catch(function(){showModalMsg('staff-msg','上傳失敗','err');});
+    }else{showModalMsg('staff-msg',d.error||'更新失敗','err');}
+  }).catch(function(){showModalMsg('staff-msg','更新失敗','err');});
 }
 
 // 上傳完整範本 → /admin/upload_template（保留舊功能）
@@ -689,7 +703,7 @@ function uploadTemplate(){
       showModalMsg('template-msg',d.message,'ok');
       updateAdminDisplay(d);
     }else{showModalMsg('template-msg',d.error,'err');}
-  }).catch(function(){showModalMsg('template-msg','上傳失敗','err');});
+  }).catch(function(){showModalMsg('template-msg','更新失敗','err');});
 }
 
 function updateAdminDisplay(d){
@@ -697,6 +711,16 @@ function updateAdminDisplay(d){
   var staffDate = d.staff_update_date || '';
   document.getElementById('modal-shop-date').textContent  = '店鋪檔更新日：'  + (shopDate  || '—');
   document.getElementById('modal-staff-date').textContent = '擔當資料更新日：' + (staffDate || '—');
+  // ✅ 主畫面資訊列同步顯示店鋪更新日
+  var el = document.getElementById('info-shop-date');
+  if(el){
+    if(shopDate){
+      el.textContent = '店鋪檔更新日：' + shopDate;
+      el.style.display = '';
+    } else {
+      el.style.display = 'none';
+    }
+  }
 }
 
 function buildTable(headers,records){
